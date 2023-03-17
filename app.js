@@ -118,5 +118,19 @@ app.get('/api/jobs', async (req, res) => {
   }
 });
 
+app.get('/api/jobs/:id', async (req, res) => {
+  try {
+    const response = await axios.get(`http://dev3.dansmultipro.co.id/api/recruitment/positions/${req.params.id}`)
+    res.status(200).json(response.data);
+  } catch (err) {
+    console.log(err);
+
+    return res.json({
+      error: 1,
+      message: err.message
+    });
+  }
+});
+
 // server
 app.listen(PORT, () => console.log(`Server running at port: ${PORT}`));
