@@ -1,4 +1,5 @@
 const express = require('express');
+const cors = require('cors');
 const bodyParser = require('body-parser');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
@@ -13,7 +14,11 @@ const PORT = process.env.PORT || 5000;
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
+app.use(cors());
+
 app.post('/api/login', (req, res) => {
+  // res.header("Access-Control-Allow-Origin", "*");
+
   const { username, password } = req.body;
 
   connection.query('SELECT * FROM users WHERE username = ?', [username], (error, results) => {
@@ -24,16 +29,15 @@ app.post('/api/login', (req, res) => {
       res.status(401).send('Invalid username or password');
     } else {
       const user = results[0];
-      console.log(user);
+
       if (password == user.password) {
-        const token = jwt.sign({ userId: user.id }, 'my-secret-key', { expiresIn: '1h' });
+        const token = jwt.sign({ id: user.id, username: user.username }, 'my-secret-key', { expiresIn: '1h' });
         connection.query('UPDATE users SET token = ? WHERE id = ?', [token, user.id], (error) => {
           if (error) {
             console.log('Error updating user token:', error);
             res.sendStatus(500);
           } else {
-            res.send({ token });
-            res.status().json({
+            res.status(200).json({
               token
             })
           }
@@ -79,7 +83,7 @@ app.post('/api/logout', auth.verifyToken, (req, res) => {
   });
 });
 
-app.get('/api/jobs', async (req, res) => {
+app.get('/api/jobs', auth.verifyToken, async (req, res) => {
   try {
     const { description, location, full_time, page } = req.query;
 
@@ -95,7 +99,7 @@ app.get('/api/jobs', async (req, res) => {
       let params = {
         desc: description ? 'description='+description : '',
         loc: location ? 'location='+location : '',
-        full_time: full_time ? 'full_time='+full_time : ''
+        full_time: full_time ? 'type='+full_time : ''
       }
 
       const response = await axios.get(`http://dev3.dansmultipro.co.id/api/recruitment/positions.json?${params.desc + params.loc + params.full_time}`)
@@ -118,7 +122,7 @@ app.get('/api/jobs', async (req, res) => {
   }
 });
 
-app.get('/api/jobs/:id', async (req, res) => {
+app.get('/api/jobs/:id', auth.verifyToken, async (req, res) => {
   try {
     const response = await axios.get(`http://dev3.dansmultipro.co.id/api/recruitment/positions/${req.params.id}`)
     res.status(200).json(response.data);
