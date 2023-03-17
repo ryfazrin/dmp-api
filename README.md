@@ -14,16 +14,40 @@ MySQL Connected...
 ```
 Server is run.
 
-## How to Use
+## API contract/Request Data
 
-Use Posman
+Use Posman to try API
 
 ```
+// Login
 POST: http://localhost:5000/api/login
-```
-![postman tutorial](./img/.jpg)
+REQUEST BODY: 
+{
+    "username": "ryan",
+    "password": "12345"
+}
 
-API contract/Request Data
-```
+// Logout
+POST: http://localhost:5000/api/logout
+REQUEST BODY: 
+{
+    "username": "ryan"
+}
 
+// Get All Jobs
+GET: http://localhost:5000/api/jobs
+
+// Get All Jobs per page
+GET: http://localhost:5000/api/jobs?page=1
+
+// Get Jobs with filter description || location || type
+http://localhost:5000/api/jobs?description=YOUR_DESCRIPTION&location=YOUR_LOCATION&type=YOUR_TYPE
+
+// Get single Job by id
+GET: http://localhost:5000/api/jobs/:id
+
+// all endpoint required:
+headers: {
+  'my-secret-key': 'MY_TOKEN'
+}
 ```

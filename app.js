@@ -85,7 +85,7 @@ app.post('/api/logout', auth.verifyToken, (req, res) => {
 
 app.get('/api/jobs', auth.verifyToken, async (req, res) => {
   try {
-    const { description, location, full_time, page } = req.query;
+    const { description, location, type, page } = req.query;
 
     // with page parameters
     if (page) {
@@ -95,14 +95,14 @@ app.get('/api/jobs', auth.verifyToken, async (req, res) => {
     }
 
     // with search parameters
-    if (description || location || full_time ) {
+    if (description || location || type ) {
       let params = {
         desc: description ? 'description='+description : '',
         loc: location ? 'location='+location : '',
-        full_time: full_time ? 'type='+full_time : ''
+        type: type ? 'type='+type : ''
       }
 
-      const response = await axios.get(`http://dev3.dansmultipro.co.id/api/recruitment/positions.json?${params.desc + params.loc + params.full_time}`)
+      const response = await axios.get(`http://dev3.dansmultipro.co.id/api/recruitment/positions.json?${params.desc + params.loc + params.type}`)
       res.status(200).json(response.data);
       return
     }
