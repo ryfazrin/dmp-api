@@ -81,19 +81,33 @@ app.post('/api/logout', auth.verifyToken, (req, res) => {
 
 app.get('/api/jobs', async (req, res) => {
   try {
+    // parameters
+    const { description, location, full_time } = req.query;
+
+    if (description || location || full_time ) {
+      let params = {
+        desc: description ? 'description='+description : '',
+        loc: location ? 'location='+location : '',
+        full_time: full_time ? 'full_time='+full_time : ''
+      }
+      console.log(`http://dev3.dansmultipro.co.id/api/recruitment/positions.json?${params.desc + params.loc + params.full_time}`);
+      const response = await axios.get(`http://dev3.dansmultipro.co.id/api/recruitment/positions.json?${params.desc + params.loc + params.full_time}`)
+      res.status(200).json(response.data);
+      return
+    }
+
     const response = await axios.get('http://dev3.dansmultipro.co.id/api/recruitment/positions.json')
     res.status(200).json(response.data);
   }
   catch (err) {
     console.log(err);
-    
+
     return res.json({
       error: 1,
-      message: err.message,
-      fields: err.errors
+      message: err.message
     });
   }
 });
 
-// buat server nya
+// server
 app.listen(PORT, () => console.log(`Server running at port: ${PORT}`));
