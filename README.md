@@ -14,6 +14,11 @@ MySQL Connected...
 ```
 Server is run.
 
+## add Database MySQL
+Install Database user with MariaDB or MySQL. With database name `dmp-accounts`
+
+Database in /db/users.sql
+
 ## API contract/Request Data
 
 Use Posman to try API
