@@ -98,10 +98,10 @@ app.get('/api/jobs', auth.verifyToken, async (req, res) => {
     if (description || location || type ) {
       let params = {
         desc: description ? 'description='+description : '',
-        loc: location ? 'location='+location : '',
-        type: type ? 'type='+type : ''
+        loc: location ? '&location='+location : '',
+        type: type ? '&type='+type : ''
       }
-
+      console.log(`http://dev3.dansmultipro.co.id/api/recruitment/positions.json?${params.desc + params.loc + params.type}`);
       const response = await axios.get(`http://dev3.dansmultipro.co.id/api/recruitment/positions.json?${params.desc + params.loc + params.type}`)
       res.status(200).json(response.data);
       return
